@@ -12,7 +12,8 @@ import {
   Music,
   Users,
   Clock,
-  ArrowRight
+  ArrowRight,
+  Receipt
 } from 'lucide-react';
 import { useDataStore } from '../../store/useDataStore';
 import { useUIStore } from '../../store/useUIStore';
@@ -27,14 +28,13 @@ import { KpiSkeleton, ChartSkeleton } from '../../components/ui/Skeleton';
 import {
   formatCurrency,
   formatNumber,
-  formatCompactNumber,
   formatPercent,
   formatHours
 } from '../../lib/formatters';
 
 export const OverviewPage: React.FC = () => {
   const { householdData, transactionSummary, spotifySummary, loading } = useDataStore();
-  const { setActiveSection } = useUIStore();
+  const { setActiveSection, setReceiptModalOpen } = useUIStore();
   const { setTxFilter } = useFilterStore();
 
   const isLoading = loading.household || loading.txSummary || loading.spotify;
@@ -55,7 +55,18 @@ export const OverviewPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Your Life In Receipts Trigger */}
+          <button
+            type="button"
+            onClick={() => setReceiptModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/80 border border-indigo-200 dark:border-indigo-800 transition-all shadow-2xs cursor-pointer"
+          >
+            <Receipt className="h-4 w-4" />
+            Your Life In Receipts
+            <span>🧾</span>
+          </button>
+
           <button
             type="button"
             onClick={() => setActiveSection('insights')}
@@ -68,13 +79,13 @@ export const OverviewPage: React.FC = () => {
       </div>
 
       {/* SECTION 1: FINANCIAL PERSPECTIVE */}
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="heading-money">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
               <Wallet className="h-4 w-4" />
             </div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            <h2 id="heading-money" className="text-base font-bold text-slate-900 dark:text-white">
               Money: Household Financial Activity
             </h2>
           </div>
@@ -136,13 +147,13 @@ export const OverviewPage: React.FC = () => {
       </section>
 
       {/* SECTION 2: RISK & TRANSACTION INTELLIGENCE */}
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="heading-risk">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400">
               <ShieldAlert className="h-4 w-4" />
             </div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            <h2 id="heading-risk" className="text-base font-bold text-slate-900 dark:text-white">
               Risk: Transaction & Fraud Signals
             </h2>
           </div>
@@ -212,13 +223,13 @@ export const OverviewPage: React.FC = () => {
       </section>
 
       {/* SECTION 3: LISTENING INTELLIGENCE */}
-      <section className="space-y-3">
+      <section className="space-y-3" aria-labelledby="heading-listening">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="p-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400">
               <Headphones className="h-4 w-4" />
             </div>
-            <h2 className="text-base font-bold text-slate-900 dark:text-white">
+            <h2 id="heading-listening" className="text-base font-bold text-slate-900 dark:text-white">
               Listening: Spotify Streaming Behavior
             </h2>
           </div>
@@ -281,8 +292,8 @@ export const OverviewPage: React.FC = () => {
       </section>
 
       {/* SECTION 4: OVERVIEW CHARTS GRID */}
-      <section className="space-y-4">
-        <h2 className="text-base font-bold text-slate-900 dark:text-white">
+      <section className="space-y-4" aria-labelledby="heading-charts">
+        <h2 id="heading-charts" className="text-base font-bold text-slate-900 dark:text-white">
           Visual Analytics Grid
         </h2>
 

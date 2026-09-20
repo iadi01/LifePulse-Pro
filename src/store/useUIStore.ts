@@ -6,6 +6,7 @@ interface UIState {
   subSection: string;
   theme: 'light' | 'dark';
   commandPaletteOpen: boolean;
+  receiptModalOpen: boolean;
   selectedTransaction: TransactionRecord | null;
   selectedArtist: SpotifyArtist | null;
   isMobileNavOpen: boolean;
@@ -15,6 +16,7 @@ interface UIState {
   toggleTheme: () => void;
   setTheme: (theme: 'light' | 'dark') => void;
   setCommandPaletteOpen: (open: boolean) => void;
+  setReceiptModalOpen: (open: boolean) => void;
   setSelectedTransaction: (tx: TransactionRecord | null) => void;
   setSelectedArtist: (artist: SpotifyArtist | null) => void;
   setIsMobileNavOpen: (open: boolean) => void;
@@ -34,6 +36,7 @@ export const useUIStore = create<UIState>((set) => ({
   subSection: 'all',
   theme: getInitialTheme(),
   commandPaletteOpen: false,
+  receiptModalOpen: false,
   selectedTransaction: null,
   selectedArtist: null,
   isMobileNavOpen: false,
@@ -71,6 +74,7 @@ export const useUIStore = create<UIState>((set) => ({
   },
 
   setCommandPaletteOpen: (open) => set({ commandPaletteOpen: open }),
+  setReceiptModalOpen: (open) => set({ receiptModalOpen: open }),
   setSelectedTransaction: (tx) => set({ selectedTransaction: tx }),
   setSelectedArtist: (artist) => set({ selectedArtist: artist }),
   setIsMobileNavOpen: (open) => set({ isMobileNavOpen: open })

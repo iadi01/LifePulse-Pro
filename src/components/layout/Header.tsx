@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Menu, Moon, Sun, Shield, Wallet, Headphones, LayoutDashboard } from 'lucide-react';
+import { Search, Menu, Moon, Sun, Shield, Wallet, Headphones, LayoutDashboard, Receipt } from 'lucide-react';
 import { useUIStore } from '../../store/useUIStore';
 import { ThemeToggle } from '../common/ThemeToggle';
 import { NavSection } from '../../types';
@@ -11,6 +11,7 @@ export const Header: React.FC = () => {
     subSection,
     setActiveSection,
     setCommandPaletteOpen,
+    setReceiptModalOpen,
     isMobileNavOpen,
     setIsMobileNavOpen
   } = useUIStore();
@@ -29,8 +30,8 @@ export const Header: React.FC = () => {
         <button
           type="button"
           onClick={() => setIsMobileNavOpen(!isMobileNavOpen)}
-          className="md:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
-          aria-label="Open mobile menu"
+          className="md:hidden p-2 rounded-lg text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+          aria-label="Open navigation menu"
         >
           <Menu className="h-5 w-5" />
         </button>
@@ -65,6 +66,7 @@ export const Header: React.FC = () => {
               key={opt.id}
               type="button"
               onClick={() => setActiveSection(opt.id, 'all')}
+              aria-label={`Switch to ${opt.label} lens`}
               className={cn(
                 'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer',
                 isActive
@@ -79,15 +81,30 @@ export const Header: React.FC = () => {
         })}
       </div>
 
-      {/* Right: Search & Actions */}
+      {/* Right: Actions */}
       <div className="flex items-center gap-2">
+        {/* Your Life In Receipts Button */}
+        <button
+          type="button"
+          onClick={() => setReceiptModalOpen(true)}
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/70 hover:bg-indigo-100 dark:hover:bg-indigo-900/80 rounded-lg border border-indigo-200 dark:border-indigo-800 transition-colors cursor-pointer shadow-2xs"
+          title="Generate Your Life In Receipts"
+          aria-label="Generate Your Life In Receipts"
+        >
+          <Receipt className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+          <span className="hidden sm:inline">Receipts</span>
+          <span>🧾</span>
+        </button>
+
+        {/* Command Palette Trigger */}
         <button
           type="button"
           onClick={() => setCommandPaletteOpen(true)}
+          aria-label="Open search command palette"
           className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800/80 rounded-lg hover:bg-slate-200/70 dark:hover:bg-slate-700/70 transition-colors border border-slate-200/60 dark:border-slate-700/50 cursor-pointer"
         >
           <Search className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Search records...</span>
+          <span className="hidden sm:inline">Search...</span>
           <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700">
             ⌘K
           </kbd>

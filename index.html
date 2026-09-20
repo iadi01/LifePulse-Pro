@@ -3,9 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="LifePulse - One interface. Three perspectives. Money. Risk. Listening." />
-    <title>LifePulse | Data Intelligence Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="theme-color" content="#4f46e5" />
+    <meta name="description" content="LifePulse - Production-grade personal-data intelligence dashboard. Explore money, transaction risk and listening behavior." />
+    <meta name="robots" content="index, follow" />
+    <title>LifePulse-Pro | Personal Data Intelligence Dashboard</title>
+
+    <!-- Performance Preloads -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preload" href="/data/transactions_summary.json" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="/data/household.json" as="fetch" crossorigin="anonymous">
+    <link rel="preload" href="/data/spotify_summary.json" as="fetch" crossorigin="anonymous">
+
+    <!-- Anti-flash inline theme script -->
     <script>
       (function() {
         try {
@@ -19,8 +30,6 @@
         } catch (e) {}
       })();
     </script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   </head>
   <body class="bg-slate-50 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white dark:bg-slate-950 dark:text-slate-100 min-h-screen">

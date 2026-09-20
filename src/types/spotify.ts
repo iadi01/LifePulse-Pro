@@ -70,3 +70,6 @@ export interface SpotifySummaryData {
   timeline_monthly: SpotifyTimelinePoint[];
   sample_streams: SpotifyStream[];
 }
+
+// Prompt requirement: SpotifyRecord model
+export type SpotifyRecord = SpotifyStream;

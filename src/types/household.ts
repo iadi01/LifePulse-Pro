@@ -48,3 +48,6 @@ export interface HouseholdData {
   monthly_trends: HouseholdMonthlyTrend[];
   records: HouseholdRecord[];
 }
+
+// Prompt requirement: HouseholdTransaction model
+export type HouseholdTransaction = HouseholdRecord;

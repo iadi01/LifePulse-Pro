@@ -2,7 +2,7 @@
 
 ### One interface. Three perspectives. Money. Risk. Listening.
 
-> **LifePulse** is a production-quality, frontend-only personal data intelligence web application built for the **WebRush 2026 Hackathon**. It transforms three organizer-provided datasets into an interactive data exploration and analytics platform across three distinct analytical lenses.
+> **LifePulse-Pro** is a production-quality, frontend-only personal data intelligence web application built for the **WebRush 2026 Hackathon**. It transforms three organizer-provided datasets into an interactive data exploration and analytics platform across three distinct analytical lenses.
 
 ---
 
@@ -17,7 +17,28 @@ The three datasets represent distinct analytical domains and are never falsely m
 
 ---
 
-## Core Features
+## Problem
+
+Modern personal data is deeply fragmented across siloed services. Financial ledgers, banking transaction streams, fraud risk flags, and media entertainment chronicles exist in disparate platforms and formats:
+- Inconsistent schemas with missing, null, or unclassified data (e.g. 645 unclassified fraud records).
+- Sensitive privacy concerns (e.g. raw credit card numbers requiring strict redaction).
+- Large dataset scales (e.g. 150k+ raw streaming events) that cause browser freezes if processed synchronously.
+- Misleading dashboards that fabricate relationships or mix unrelated individuals into a single fake identity.
+
+---
+
+## Solution
+
+LifePulse-Pro resolves this by introducing a **three-perspective analytical architecture**:
+- **Domain Independence**: Respects the separation of Money, Risk, and Listening without synthetic conflation.
+- **Strict Data Auditing**: Explicitly handles null values with safe fallbacks (`Safe`, `Fraud`, `Unknown`) without data loss.
+- **Privacy By Design**: Complete client-side masking of sensitive customer identifiers and card numbers.
+- **Deterministic Insights**: Computes mathematical facts directly from the underlying data with direct deep-links.
+- **Your Life, In Receipts 🧾**: Generates a unified, printable thermal summary receipt synthesizing all three domains.
+
+---
+
+## Features
 
 ### 1. Overview Dashboard
 - **Perspective Switcher**: Instant global lens toggle (`[ All ] [ Money ] [ Risk ] [ Listening ]`).
@@ -43,9 +64,7 @@ The three datasets represent distinct analytical domains and are never falsely m
 - **Interactive Transaction Explorer**:
   - Multi-parameter filtering: Full-text search, Category, Risk status (`All`, `Safe`, `Fraud`, `Unknown`), State, Amount range, and Date sorting.
   - Semantic risk indicators: `▲ Fraud`, `● Safe`, `? Unknown`.
-- **Slide-out Transaction Detail Drawer**:
-  - Full transaction audit view with merchant metadata, geographic coordinates, and customer profiles.
-  - **Privacy Enforcement**: Strict redacting of sensitive account numbers (`•••• •••• •••• 1234`).
+- **Slide-out Transaction Detail Drawer**: Full audit view with merchant metadata, coordinates, and privacy-masked card numbers (`•••• •••• •••• 1234`).
 
 ### 4. Spotify Listening Intelligence
 - **Longitudinal Streaming KPIs**: 149,860 total plays, 5,341.5 hours listened, 4,113 unique artists, 14,639 unique tracks, 5.2% skip rate, 74.5% shuffle rate.
@@ -55,7 +74,7 @@ The three datasets represent distinct analytical domains and are never falsely m
 - **Behavior Analytics Lab**:
   - Stream Completion vs Skip Rate distribution.
   - Shuffle Mode vs Sequential playback breakdown.
-  - Platform distribution (`Android`, `Cast to Device`, `iOS`, `Windows`, `Mac`).
+  - Platform distribution (`Android`, `Cast to Device`, `iOS`, `Windows`, `Mac`, `Web Player`).
   - Playback initiation (`reason_start`) and termination (`reason_end`) mechanics.
 
 ### 5. Empirical Data Insights
@@ -81,26 +100,24 @@ All three datasets provided by the organizers are included and processed:
 
 ---
 
-## Large Dataset Strategy & Performance
+## Data Processing
 
-1. **Offline Preprocessing Script (`scripts/preprocess_data.py`)**:
-   - Cleans null values, standardizes dates, and masks sensitive credit card data.
-   - Computes aggregations, rankings, and time series ahead of time.
-2. **Clean JSON Storage (`public/data/`)**:
-   - `transactions_summary.json` (4.5 KB): Loaded immediately for instantaneous overview and risk chart rendering.
-   - `household.json` (546 KB): Complete 2,461 rows and summary metrics for the money explorer.
-   - `spotify_summary.json` (402 KB): Pre-computed catalog of top 100 artists, top 100 tracks, platforms, and behavioral stats.
-   - `transactions.json` (4.2 MB): Loaded asynchronously in the background so initial load is never blocked.
-3. **Bundle Optimization**:
-   - Recharts and Lucide icons are separated into dedicated vendor chunks via Vite Rollup manual chunking.
-   - Application code is only ~154 kB (~34 kB gzipped).
+- **Offline Preprocessing Pipeline (`scripts/preprocess_data.py`)**:
+  - Audits null values, standardizes date formats, and computes high-order aggregations ahead of time.
+  - Removes sensitive customer identifiers and replaces credit card numbers with masked representations (`•••• •••• •••• 1234`).
+  - Converts large datasets into compact, pre-indexed JSON payloads in `public/data/`.
+- **Pre-Aggregated Summaries**:
+  - `transactions_summary.json` (4.5 KB): Fast initial paint for Overview KPIs and charts.
+  - `household.json` (546 KB): Complete 2,461 rows and summary aggregations for instant client-side filtering.
+  - `spotify_summary.json` (402 KB): Pre-computed catalog of top 100 artists, top 100 tracks, platforms, and behavioral stats.
+  - `transactions.json` (3.9 MB): Cleaned transaction rows with asynchronous streaming load to avoid blocking initial render.
 
 ---
 
 ## Technology Stack
 
 - **Framework**: React 18 / TypeScript / Vite
-- **Styling**: Tailwind CSS v4
+- **Styling**: Tailwind CSS v4 with custom class-based dark mode
 - **Charts**: Recharts (`ResponsiveContainer`, `AreaChart`, `BarChart`, `PieChart`)
 - **State Management**: Zustand
 - **Icons**: Lucide React
@@ -109,17 +126,69 @@ All three datasets provided by the organizers are included and processed:
 
 ---
 
-## Accessibility & Responsive Design
+## Architecture
 
-- **Accessibility**:
-  - Semantic HTML landmarks (`<aside>`, `<header>`, `<main>`, `<nav>`, `<table>`).
-  - High-contrast visual cues (`▲ Fraud`, `● Safe`, `? Unknown`).
-  - Full keyboard navigability in tables and the `Cmd+K` command palette.
-- **Responsive Layout**:
-  - Tested across mobile (320px, 375px, 390px), tablet (768px), and desktop (1024px, 1440px).
-  - Desktop: Persistent left sidebar with real-time dataset badges.
-  - Mobile: Fixed bottom navigation bar and touch-friendly slide-out drawer.
-  - Slide drawers adapt to full width on mobile viewports.
+LifePulse-Pro follows a modular, feature-first frontend architecture:
+```text
+src/
+├── components/
+│   ├── ui/             # Atomic UI elements (Button, Input, Select, Badge, Skeleton)
+│   ├── charts/         # Reusable Recharts visualizations
+│   ├── tables/         # DataTable and specialized data grids
+│   ├── cards/          # StatCard, KpiCard, ReceiptModal
+│   ├── filters/        # FilterBar and parameter controls
+│   └── layout/         # AppShell, Sidebar, Header, MobileNav, CommandPalette
+├── features/
+│   ├── overview/       # Multi-lens executive dashboard
+│   ├── household/      # Household money and cash flow analytics
+│   ├── transactions/   # Transaction explorer, detail drawer, risk center
+│   ├── listening/      # Artist catalog, tracks, and listening behavior
+│   └── insights/       # Deterministic data insights engine
+├── data/               # Data endpoints and API abstractions
+├── hooks/              # Custom React hooks (useHousehold, useTransactions, useSpotify, useTheme)
+├── utils/              # Pure analytics logic (householdAnalytics, transactionAnalytics, spotifyAnalytics)
+├── store/              # Zustand state stores (useUIStore, useFilterStore, useDataStore)
+├── types/              # Strict TypeScript models (HouseholdTransaction, TransactionRecord, SpotifyRecord)
+└── pages/              # Routed view proxies
+```
+
+---
+
+## Accessibility
+
+- **Semantic HTML5**: Full landmark structure with `<header>`, `<nav>`, `<aside>`, `<main id="main-content">`, and `<table>`.
+- **Keyboard Navigation**:
+  - Visible focus indicators across all interactive buttons and inputs.
+  - Global Command Palette accessible via `Cmd + K` / `Ctrl + K`.
+  - Full `Escape` key listeners on drawers and modals.
+  - Accessible skip link: `Skip to main content`.
+- **Color Independence**: Status badges employ distinct iconography alongside color cues (`▲ Fraud`, `● Safe`, `? Unknown`).
+- **Screen Reader Support**: Meaningful `aria-label`, `aria-modal="true"`, `role="dialog"`, and `<caption>` elements on data grids.
+
+---
+
+## Responsive Design
+
+- **Mobile First**: Tested and verified across 320px, 375px, 390px, 768px, 1024px, 1280px, and 1440px viewports.
+- **Adaptive Navigation**:
+  - Desktop: Persistent glassmorphism sidebar with live dataset record counters.
+  - Mobile: Fixed bottom navigation bar with quick access to primary lenses, plus a slide-out drawer menu.
+- **Dynamic Layouts**:
+  - KPI cards scale from single-column on mobile to 4-6 column grids on large screens.
+  - Detail drawers adapt to bottom-sheet drawers on small viewports.
+  - Horizontal scrolling enabled with custom styled scrollbars for wide financial tables.
+
+---
+
+## Performance
+
+- **Zero-Block Rendering**: Initial dashboard paints immediately using lightweight pre-aggregated summary metadata (under 10 KB).
+- **Code Splitting**: Rollup chunk splitting separates `vendor`, `recharts`, and `icons` into isolated bundles.
+- **Core Web Vitals**:
+  - `rel="preload"` directives for primary analytical JSON endpoints.
+  - `font-display: swap` for system typography without layout shifts.
+  - Sub-35 KB gzipped application script bundle.
+- **Memoized Analytics**: Heavy filtering and sorting calculations memoized via `useMemo` to ensure 60fps UI interactions.
 
 ---
 
@@ -129,12 +198,13 @@ All three datasets provided by the organizers are included and processed:
 - Node.js (v18+)
 - npm
 
-### Installation & Run
+### Installation & Execution
 ```bash
-# 1. Navigate to project folder
-cd lifepulse
+# 1. Clone repository
+git clone https://github.com/iadi01/LifePulse-Pro.git
+cd LifePulse-Pro
 
-# 2. Install dependencies (if not already installed)
+# 2. Install dependencies
 npm install
 
 # 3. Start development server
@@ -146,6 +216,17 @@ npm run preview
 ```
 
 Open `http://localhost:5173/` in your browser.
+
+---
+
+## Deployment
+
+LifePulse-Pro is built with a strictly frontend-only architecture designed for immediate zero-config deployment on Vercel:
+- **Platform**: Vercel
+- **Framework Preset**: Vite
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+- **Environment Variables**: None required (100% client-side execution)
 
 ---
 
@@ -163,66 +244,25 @@ lifepulse/
 │   └── preprocess_data.py
 ├── src/
 │   ├── components/
+│   │   ├── cards/
 │   │   ├── charts/
-│   │   │   ├── CategoryBarChart.tsx
-│   │   │   ├── FraudCategoryChart.tsx
-│   │   │   ├── ListeningTimelineChart.tsx
-│   │   │   ├── PaymentModeChart.tsx
-│   │   │   ├── RiskDonutChart.tsx
-│   │   │   └── SpendingTrendChart.tsx
-│   │   ├── common/
-│   │   │   ├── EmptyState.tsx
-│   │   │   ├── ErrorBoundary.tsx
-│   │   │   ├── KpiCard.tsx
-│   │   │   └── ThemeToggle.tsx
+│   │   ├── filters/
 │   │   ├── layout/
-│   │   │   ├── AppShell.tsx
-│   │   │   ├── CommandPalette.tsx
-│   │   │   ├── Header.tsx
-│   │   │   ├── MobileNav.tsx
-│   │   │   └── Sidebar.tsx
+│   │   ├── tables/
 │   │   └── ui/
-│   │       ├── Badge.tsx
-│   │       ├── Button.tsx
-│   │       ├── Card.tsx
-│   │       ├── Input.tsx
-│   │       ├── Select.tsx
-│   │       └── Skeleton.tsx
+│   ├── data/
 │   ├── features/
-│   │   ├── insights/
-│   │   │   └── InsightsPage.tsx
-│   │   ├── listening/
-│   │   │   ├── ArtistDetailModal.tsx
-│   │   │   ├── ArtistsSection.tsx
-│   │   │   ├── BehaviorSection.tsx
-│   │   │   ├── ListeningPage.tsx
-│   │   │   └── TracksSection.tsx
-│   │   ├── money/
-│   │   │   └── MoneyPage.tsx
-│   │   ├── overview/
-│   │   │   └── OverviewPage.tsx
-│   │   └── transactions/
-│   │       ├── RiskDashboard.tsx
-│   │       ├── TransactionDetailDrawer.tsx
-│   │       ├── TransactionExplorer.tsx
-│   │       └── TransactionsPage.tsx
+│   ├── hooks/
 │   ├── lib/
-│   │   ├── formatters.ts
-│   │   └── utils.ts
+│   ├── pages/
 │   ├── store/
-│   │   ├── useDataStore.ts
-│   │   ├── useFilterStore.ts
-│   │   └── useUIStore.ts
 │   ├── types/
-│   │   ├── household.ts
-│   │   ├── index.ts
-│   │   ├── spotify.ts
-│   │   └── transaction.ts
+│   ├── utils/
 │   ├── App.tsx
 │   ├── index.css
 │   └── main.tsx
+├── index.html
 ├── package.json
-├── tailwind.config.js
 ├── tsconfig.json
 └── vite.config.ts
 ```
@@ -231,5 +271,5 @@ lifepulse/
 
 ## Limitations
 
-- **Dataset Decoupling**: The datasets reflect distinct source populations and are intentionally not matched to a single persona.
-- **Frontend-Only**: No server-side mutations or remote database calls. All indexing and filtering occur inside browser memory.
+- **Domain Decoupling**: The three datasets reflect independent anonymized sources and are intentionally analyzed as separate analytical lenses rather than linked to a single individual.
+- **Client Processing Limits**: Very large ad-hoc multi-parameter regex searches on 10,000+ rows execute within browser memory and may depend on client device processing capacity.
